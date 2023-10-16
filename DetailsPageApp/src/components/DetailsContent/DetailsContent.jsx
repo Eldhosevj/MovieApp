@@ -1,27 +1,21 @@
 import React, { useEffect, useState } from "react";
 import "./DetailsContent.scss";
-import {useStore } from "store/store";
+import useBearStore from "store/store";
+
 
 const DetailsContent = (props) => {
   const [movie, setMovie] = useState([]);
   const [date, setDate] = useState("01/02/2022");
   const [time, setTime] = useState("10 Am");
-  const {selectedMovie:userselectedMovie, routeUrl,  getMovieList, updateRoute, getUserSelectedMovie,movieList,updateBookingDetails}=useStore()
+  const {updateBookingDetails, updateRoute, selectedMovie,movieList, getMovieList,getUserSelectedMovie} = useBearStore((state) => state)
 
   useEffect(async () => {
-
-    const data = movieList;
-
-    let pathArr = props.location.pathname.split("/");
-    let id = pathArr[pathArr.length - 1];
-
-    const selectedMovie = data.filter((movie) => {
-      return movie.id === parseInt(id);
+    const data = movieList
+    const userSelectedMovie = data.filter((movie) => {
+      return movie.id === selectedMovie.id;
     });
 
-    console.log(selectedMovie);
-
-    setMovie(selectedMovie[0]);
+    setMovie(userSelectedMovie[0]);
   }, []);
 
   const renderImage = () => {
@@ -36,13 +30,8 @@ const DetailsContent = (props) => {
       time,
     };
 
-    // import("movieapp/MovieData").then((module) => {
-    //   const movieData = module.default;
-    //   movieData.next(booking);
-    //   props.routing.history.push("/book");
-    // });
     updateBookingDetails(booking)
-    updateRoute("/book")
+     updateRoute("/book")
   };
 
   return (

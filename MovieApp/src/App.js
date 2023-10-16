@@ -8,12 +8,14 @@ const SeatSelectionPage = React.lazy(() =>
 );
 import ErrorBoundary from "./Error"
 import movieData from "./movieObservable"
-import {useStore } from "store/store";
+import useBearStore from "store/store";
+
 
 const App = () => {
   const history = useHistory();
   const location = useLocation();
-  const { routeUrl,  getMovieList, updateRoute,selectedMovie}=useStore()
+  const { routeUrl,selectedMovie} = useBearStore((state) => state)
+
 
 
   const movieClicked = (movie) => {

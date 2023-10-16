@@ -6,10 +6,9 @@ import App from "./App";
 import { StoreProvider, useStore } from "store/store";
 
 ReactDOM.render(
-  <StoreProvider>
   <BrowserRouter>
     <App />
   </BrowserRouter>
-  </StoreProvider>,
+  ,
   document.getElementById("app")
 );

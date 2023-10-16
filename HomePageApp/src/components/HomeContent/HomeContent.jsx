@@ -3,12 +3,12 @@ import QuickBooking from "../QuickBooking/QuickBooking.jsx";
     import MovieCard from "components/MovieCard"
 import RoutingContext from "../../utils/RoutingProvider";
 import "./HomeContent.scss";
-import {useStore } from "store/store";
+import useBearStore from "store/store";
 
 const dummyItem = [{ name: "Dummy Movie" }];
 
 const HomeContent = (props) => {
-  const { routeUrl,  getMovieList, updateRoute, getUserSelectedMovie}=useStore()
+  const { updateRoute, selectedMovie,movieList, getMovieList,getUserSelectedMovie} = useBearStore((state) => state)
 
   const [movies, setMovies] = useState(dummyItem);
   useEffect(async () => {
@@ -17,11 +17,13 @@ const HomeContent = (props) => {
     const data = await resp.json();
     setMovies(data);
     getMovieList(data)
+ 
+
   }, []);
 
   const movieClicked = (item) => {
-   
-    getUserSelectedMovie(item)
+   console.log( selectedMovie," selectedMovie")
+     getUserSelectedMovie(item)
     updateRoute("/details")
   };
 

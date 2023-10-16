@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./SeatSelectionContent.scss";
-import {  useStore } from "store/store";
+import useBearStore from "store/store";
+
 
 const SeatSelectionContent = () => {
-  const {bookingDetails, routeUrl,  getMovieList, updateRoute, getUserSelectedMovie,movieList,updateBookingDetails}=useStore()
+  const {bookingDetails,updateBookingDetails, updateRoute, selectedMovie:userSelectedMovie,movieList, getMovieList,getUserSelectedMovie} = useBearStore((state) => state)
 
   const [bookingData, setBookingData] = useState({
     movie: "Select Movie",
@@ -14,12 +15,7 @@ const SeatSelectionContent = () => {
   const [seatsCount, setSeatsCount] = useState(0);
 
   const loadBooking = async (booking) => {
-    const resp = await fetch("http://localhost:5555/movies");
-    const data = await resp.json();
-
-    const selectedMovie = data.filter((movie) => {
-      return movie.id === parseInt(booking.movie);
-    });
+    const selectedMovie = userSelectedMovie
 
     setBookingData({
       movie: selectedMovie[0].name,
@@ -30,23 +26,15 @@ const SeatSelectionContent = () => {
   };
 
   useEffect(() => {
-    bookingDetails
+   
     loadBooking(bookingDetails);
-    // import("movieapp/MovieData").then((module) => {
-    //   const movieData = module.default;
-    //   movieData.subscribe({
-    //     next: (val) => {
-    //       console.log(`Movie data received is`, val)
-          
-    //     },
-    //   });
-    // }).catch((err)=>{
-      
-    // });
-  }, []);
 
+  }, []);
+React.useEffect(()=>{
+  console.log(bookingData,userSelectedMovie,"userSelectedMovie")
+})
   const renderImage = () => {
-    const imgUrl = `http://localhost:5555/images/${bookingData.imageUrl}`;
+    const imgUrl = `http://localhost:5555/images/${userSelectedMovie.imageUrl}`;
     return <img src={imgUrl}></img>;
   };
 
@@ -78,13 +66,13 @@ const SeatSelectionContent = () => {
     <div className="seat-selection-container">
       <div className="column">{renderImage()}</div>
       <div className="column full-width p-20">
-        <span className="movie-title">{bookingData.movie}</span>
+        <span className="movie-title">{userSelectedMovie.name}</span>
         <span className="mt-2"> Book Movie</span>
         <span className="mt-2">
-          Selected Date : <strong>{bookingData.date}</strong>
+          Selected Date : <strong>{bookingDetails.date}</strong>
         </span>
         <span className="mt-2">
-          Time Selected : <strong>{bookingData.time}</strong>
+          Time Selected : <strong>{bookingDetails.time}</strong>
         </span>
 
         <div className="screen-select-container mt-2">
