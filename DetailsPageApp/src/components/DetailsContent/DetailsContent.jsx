@@ -1,28 +1,24 @@
 import React, { useEffect, useState } from "react";
 import "./DetailsContent.scss";
+import { io } from "socket.io-client";
+const sockets = io("http://localhost:8080");
 import {useStore } from "store/store";
-
 const DetailsContent = (props) => {
+  const socket=props?props.socket:sockets
+  const data = props.data?props.data:{};
+  const selectedMovie=data.selectedMovie?data.selectedMovie:null
   const [movie, setMovie] = useState([]);
   const [date, setDate] = useState("01/02/2022");
   const [time, setTime] = useState("10 Am");
   const {selectedMovie:userselectedMovie, routeUrl,  getMovieList, updateRoute, getUserSelectedMovie,movieList,updateBookingDetails}=useStore()
 
-  useEffect(async () => {
+  useEffect(() => {
+   
 
-    const data = movieList;
+    setMovie(selectedMovie);
+  },[]);
 
-    let pathArr = props.location.pathname.split("/");
-    let id = pathArr[pathArr.length - 1];
 
-    const selectedMovie = data.filter((movie) => {
-      return movie.id === parseInt(id);
-    });
-
-    console.log(selectedMovie);
-
-    setMovie(selectedMovie[0]);
-  }, []);
 
   const renderImage = () => {
     const imgUrl = `http://localhost:5555/images/${movie.imageUrl}`;
@@ -30,6 +26,8 @@ const DetailsContent = (props) => {
   };
 
   const bookMovie = () => {
+  const movieList=data.data?data.data:[]
+
     const booking = {
       movie: movie.id,
       date,
@@ -42,7 +40,9 @@ const DetailsContent = (props) => {
     //   props.routing.history.push("/book");
     // });
     updateBookingDetails(booking)
-    updateRoute("/book")
+
+    socket.emit("chat",{data:movieList,routeUrl:"/book",selectedMovie:selectedMovie,booking:booking});
+
   };
 
   return (

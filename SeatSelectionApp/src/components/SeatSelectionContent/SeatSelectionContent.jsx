@@ -2,9 +2,13 @@ import React, { useEffect, useState } from "react";
 import "./SeatSelectionContent.scss";
 import {  useStore } from "store/store";
 
-const SeatSelectionContent = () => {
-  const {bookingDetails, routeUrl,  getMovieList, updateRoute, getUserSelectedMovie,movieList,updateBookingDetails}=useStore()
-
+const SeatSelectionContent = (props) => {
+  const { routeUrl,  getMovieList, updateRoute, getUserSelectedMovie,movieList,updateBookingDetails}=useStore()
+const data=props.data
+const bookingDetails=data.selectedMovie
+?data.selectedMovie
+:{}
+const booking=data.booking?data.booking:{}
   const [bookingData, setBookingData] = useState({
     movie: "Select Movie",
     date: "Select Date",
@@ -30,23 +34,13 @@ const SeatSelectionContent = () => {
   };
 
   useEffect(() => {
-    bookingDetails
+    console.log(bookingDetails,"bookingDetails",booking)
     loadBooking(bookingDetails);
-    // import("movieapp/MovieData").then((module) => {
-    //   const movieData = module.default;
-    //   movieData.subscribe({
-    //     next: (val) => {
-    //       console.log(`Movie data received is`, val)
-          
-    //     },
-    //   });
-    // }).catch((err)=>{
-      
-    // });
+
   }, []);
 
   const renderImage = () => {
-    const imgUrl = `http://localhost:5555/images/${bookingData.imageUrl}`;
+    const imgUrl = `http://localhost:5555/images/${bookingDetails.imageUrl}`;
     return <img src={imgUrl}></img>;
   };
 
@@ -81,10 +75,10 @@ const SeatSelectionContent = () => {
         <span className="movie-title">{bookingData.movie}</span>
         <span className="mt-2"> Book Movie</span>
         <span className="mt-2">
-          Selected Date : <strong>{bookingData.date}</strong>
+          Selected Date : <strong>{booking.date}</strong>
         </span>
         <span className="mt-2">
-          Time Selected : <strong>{bookingData.time}</strong>
+          Time Selected : <strong>{booking.time}</strong>
         </span>
 
         <div className="screen-select-container mt-2">

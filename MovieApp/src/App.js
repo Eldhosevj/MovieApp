@@ -8,43 +8,60 @@ const SeatSelectionPage = React.lazy(() =>
 );
 import ErrorBoundary from "./Error"
 import movieData from "./movieObservable"
-import {useStore } from "store/store";
+import { io } from "socket.io-client";
+const socket = io("http://localhost:8080");
 
 const App = () => {
   const history = useHistory();
   const location = useLocation();
-  const { routeUrl,  getMovieList, updateRoute,selectedMovie}=useStore()
-
+  const [data, setData] = React.useState(null)
+const [url,setUrl]=React.useState("/")
 
   const movieClicked = (movie) => {
     //history.push(`details/${movie.id}`);
   };
-React.useEffect(()=>{
-  if(routeUrl=="/details"){
-  history.push(`/details/${selectedMovie.id}`);
-  }
-  else{
-    history.push(routeUrl);
-  }
-},[routeUrl])
- 
+  React.useEffect(() => {
+    console.log("runiing unnesary")
+    socket.on("chat", (args) => {
+      if(url!==args.routeUrl){
+        setUrl(args.routeUrl)
+         setData(args)
+
+      }
+      if (args.routeUrl == "/details") {
+        history.push(`/details/${args.selectedMovie.id}`);
+      }
+      else {
+        history.push(args.routeUrl);
+      }
+    });
+
+  })
+
 
   return (
     <Switch>
       <Route path="/details/:id">
         <Suspense fallback={null}>
-          <DetailsPage routing={{ history, location }} location={location}></DetailsPage>
+          <DetailsPage routing={{ history, location }} location={location}
+            socket={socket}
+            data={data}
+          ></DetailsPage>
         </Suspense>
       </Route>
       <Route path="/book">
         <Suspense fallback={null}>
-          <SeatSelectionPage></SeatSelectionPage>
+          <SeatSelectionPage
+            socket={socket}
+            data={data}
+          ></SeatSelectionPage>
         </Suspense>
       </Route>
       <Route path="/">
         <Suspense fallback={null}>
           <HomePage
-          
+            socket={socket}
+
           ></HomePage>
         </Suspense>
       </Route>
